@@ -40,5 +40,6 @@ func main() {
 	userHandler := api.NewUserHandler(db.NewMongoUserStore(client))
 	apiv1.Get("/user", userHandler.HadleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HadleGetUser)
+	apiv1.Post("/user", userHandler.HandlePostUser)
 	app.Listen(*listenAddr)
 }
