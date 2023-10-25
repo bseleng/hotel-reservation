@@ -37,7 +37,7 @@ func main() {
 	apiv1 := app.Group("api/v1")
 
 	// handlers initialization
-	userHandler := api.NewUserHandler(db.NewMongoUserStore(client))
+	userHandler := api.NewUserHandler(db.NewMongoUserStore(client, dbname))
 	apiv1.Get("/user", userHandler.HadleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HadleGetUser)
 	apiv1.Post("/user", userHandler.HandlePostUser)
