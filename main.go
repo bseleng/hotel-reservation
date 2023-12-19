@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/bseleng/hotel-reservation/api"
+	"github.com/bseleng/hotel-reservation/api/middleware"
 	"github.com/bseleng/hotel-reservation/db"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,7 +34,7 @@ func main() {
 	var (
 		hotelStore = db.NewMongoHotelStore(client)
 		roomStore  = db.NewMongoRoomStore(client, hotelStore)
-		userStore  = db.NewMongoUserStore(client, db.DBNAME)
+		userStore  = db.NewMongoUserStore(client)
 		store      = &db.Store{
 			Hotel: hotelStore,
 			Room:  roomStore,
@@ -41,9 +42,16 @@ func main() {
 		}
 		hotelHandler = api.NewHotelHandler(store)
 		userHandler  = api.NewUserHandler(store.User)
+		authHandler  = api.NewAuthHandler(store.User)
 		app          = fiber.New(config)
-		apiv1        = app.Group("api/v1")
+		auth         = app.Group("api")
+		apiv1        = app.Group("api/v1", middleware.JWTAuthentication)
 	)
+
+	//auth handles
+	auth.Post("/auth", authHandler.HandleAuthenticate)
+
+	// versioned api routes
 	// user handles
 	apiv1.Get("/user", userHandler.HadleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HadleGetUser)

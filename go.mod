@@ -6,6 +6,7 @@ require github.com/gofiber/fiber/v2 v2.49.2
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect

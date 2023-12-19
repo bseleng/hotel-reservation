@@ -70,7 +70,7 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 		// values bson.M
 		params types.UpdateUserParams
 		userID = c.Params("id")
-	 )
+	)
 
 	oid, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
