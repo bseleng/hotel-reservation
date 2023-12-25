@@ -16,8 +16,8 @@ func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 		if !ok {
 			fmt.Println("token is not present in the header")
 			return fmt.Errorf("unauthorized")
-
 		}
+
 		claims, err := validateToken(token)
 		if err != nil {
 			return err
@@ -28,7 +28,7 @@ func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 		if time.Now().Unix() > expires {
 			return fmt.Errorf("token expired")
 		}
-		fmt.Println(expires)
+
 		userID := claims["id"].(string)
 		user, err := userStore.GetUserByID(c.Context(), string(userID))
 
