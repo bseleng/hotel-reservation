@@ -56,7 +56,7 @@ func (s *MongoUserStore) GetUserByEmail(ctx context.Context, email string) (*typ
 	if err := s.coll.FindOne(ctx, bson.M{"email": email}).Decode(&user); err != nil {
 		return nil, err
 	}
-	
+
 	return &user, nil
 }
 
@@ -97,8 +97,9 @@ func (s *MongoUserStore) DeleteUser(ctx context.Context, id string) error {
 }
 
 func (s *MongoUserStore) UpdateUser(ctx context.Context, filter bson.M, params types.UpdateUserParams) error {
+
 	update := bson.M{
-		"$set": params.ToBSON(),
+		"$set": params,
 	}
 
 	_, err := s.coll.UpdateOne(ctx, filter, update)
