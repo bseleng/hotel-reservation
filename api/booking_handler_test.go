@@ -31,12 +31,12 @@ func TestAdminGetBookings(t *testing.T) {
 	)
 
 	_ = booking
+	fmt.Printf("\n\n adminUser --> %+v\n", adminUser)
+
 	admin.Get("/", bookingHandler.HandleGetBookings)
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Add("X-Api-Token", CreateTokenFromUser(adminUser))
-	fmt.Printf("\n\nrequest --> %+v\n", req)
 	resp, err := app.Test(req)
-	fmt.Printf("\n\nresponse --> %+v\n", req)
 
 	if err != nil {
 		t.Fatal(err)
