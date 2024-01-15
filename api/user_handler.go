@@ -38,7 +38,7 @@ func (h *UserHandler) HadleGetUser(c *fiber.Ctx) error {
 func (h *UserHandler) HadleGetUsers(c *fiber.Ctx) error {
 	users, err := h.userStore.GetUsers(c.Context())
 	if err != nil {
-		return err
+		return ErrNotFound("users")
 	}
 
 	return c.JSON(users)
@@ -74,10 +74,11 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 
 	oid, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		return err
+		return ErrInvadidID()
 	}
 	if err := c.BodyParser(&params); err != nil {
-		return err
+		return ErrBadRequest()
+
 	}
 	filter := bson.M{"_id": oid}
 	if err := h.userStore.UpdateUser(c.Context(), filter, params); err != nil {
