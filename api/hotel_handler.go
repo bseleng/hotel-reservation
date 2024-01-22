@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/bseleng/hotel-reservation/db"
+	"github.com/bseleng/hotel-reservation/types"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -17,21 +18,37 @@ func NewHotelHandler(store *db.Store) *HotelHandler {
 	}
 }
 
+type ResourceResp struct {
+	Data    []*types.Hotel `json:"data"`
+	Results int            `json:"results"`
+	Page    int            `json:"page"`
+}
+
 type HotelQueryParams struct {
-	Rooms  bool
+	db.Pagination
 	Rating int
 }
 
-func (h *HotelHandler) HanlderGetHotels(c *fiber.Ctx) error {
-	var qparams HotelQueryParams
-	if err := c.QueryParser(&qparams); err != nil {
-		return err
+func NewResurceResp(data []*types.Hotel, page int) ResourceResp {
+	return ResourceResp{
+		Results: len(data),
+		Data:    data,
+		Page:    page,
 	}
-	hotels, err := h.store.Hotel.GetHotels(c.Context(), nil)
+}
+func (h *HotelHandler) HanlderGetHotels(c *fiber.Ctx) error {
+	var params HotelQueryParams
+	if err := c.QueryParser(&params); err != nil {
+		return ErrBadRequest()
+	}
+	filter := db.Map{
+		"rating": params.Rating,
+	}
+	hotels, err := h.store.Hotel.GetHotels(c.Context(), filter, &params.Pagination)
 	if err != nil {
 		return ErrNotFound("hotels")
 	}
-	return c.JSON(hotels)
+	return c.JSON(NewResurceResp(hotels, int(params.Page)))
 }
 
 func (h *HotelHandler) HandleGetHotel(c *fiber.Ctx) error {
